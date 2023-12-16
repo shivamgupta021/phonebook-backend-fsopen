@@ -1,8 +1,10 @@
 const express = require("express")
 const morgan = require("morgan")
 const app = express()
+const cors = require("cors")
 
 app.use(express.json())
+app.use(cors())
 
 morgan.token("body", function (req, res) {
   return JSON.stringify(req.body)
@@ -35,16 +37,6 @@ let persons = [
   },
 ]
 
-// const requestLogger = (request, response, next) => {
-//   console.log("Method:", request.method)
-//   console.log("Path:  ", request.path)
-//   console.log("Body:  ", request.body)
-//   console.log("---")
-//   next()
-// }
-// app.use(requestLogger)
-// manual way to log req,res
-
 const generateId = () => {
   const maxId =
     persons.length > 0 ? Math.max(...persons.map((person) => person.id)) : 0
@@ -73,7 +65,7 @@ app.get("/api/persons/:id", (req, res) => {
   }
 })
 
-app.delete("/api/perosns/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id)
 
   persons = persons.filter((person) => person.id !== id)
@@ -118,7 +110,7 @@ const unknownEndpoint = (request, response) => {
 }
 app.use(unknownEndpoint)
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`server running at port ${PORT}...`)
 })
